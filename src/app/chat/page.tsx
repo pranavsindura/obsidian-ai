@@ -30,6 +30,12 @@ export default function Home() {
   };
 
   const getChatCompletion = async () => {
+    const trimmedUserPrompt = userPrompt.trim();
+    if (trimmedUserPrompt === "") {
+      setError("Please enter a prompt");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setUserPrompt("");

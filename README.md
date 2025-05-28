@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Obsidian AI
 
-## Getting Started
+Use RAG to query OpenAI using your markdown notes as context.
 
-First, run the development server:
+I use it to ask questions with my Obsidian based notes as reference.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Screenshots
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Chat
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+![Chat](./attachments/chat.png)
+![Chat](./attachments/chat2.png)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Embeddings
 
-## Learn More
+![Embeddings](./attachments/embeddings.png)
 
-To learn more about Next.js, take a look at the following resources:
+## Search
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![Search](./attachments/search.png)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Setup
 
-## Deploy on Vercel
+You will need
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- A chat completion model hosted on Azure OpenAI
+- A text embedding model hosted on Azure OpenAI
+- A local ChromaDB installation, for storing your embeddings
+- Your Markdown notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Installation
+
+1. Clone the repository
+2. Install the Next.js dependencies
+   1. `npm install` to install dependencies for the app
+   2. `npm run dev` to start the app
+3. Install the Python dependencies
+   1. `cd src/scripts`
+   2. `pip install -r requirements.txt`
+4. Install [ChromaDB](https://docs.trychroma.com/cli/install)
+
+### Create a .env file
+
+Use `.env.sample` as a template and fill in your OpenAI and ChromaDB details
+
+### Create embeddings from your notes
+
+1. Go into the project directory - `cd /path/to/obsidian-ai`
+2. Run ChromaDB - `chroma run`
+3. Run `python src/scripts/embedFiles.py "/path/to/notes"`, this will start embedding your notes and storing them into ChromaDB
+   1. example - `python src/scripts/embedFiles.py "/Users/pranavsindura/Obsidian Notes/Personal"`
+
+### Run the app
+
+1. Go into the project directory - `cd /path/to/obsidian-ai`
+2. Start ChromaDB - `chroma run`
+3. Build the app - `npm run build`
+4. Start the app - `npm run start`
+5. Open `http://localhost:3000` in your browser
