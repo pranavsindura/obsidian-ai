@@ -4,6 +4,7 @@ import { NextRequest } from "next/server";
 
 export interface GetSearchResponse {
   text: string;
+  sources: string[];
 }
 
 export async function GET(request: NextRequest) {
@@ -32,11 +33,20 @@ export async function GET(request: NextRequest) {
     nResults: 5,
   });
 
-  const documents = response.documents;
+  const documents = response.documents[0];
 
-  const matchedText = documents
-    .map((document) => document.filter((content) => !!content).join("\n"))
-    .join("\n\n");
+  const metadatas = response.metadatas[0];
 
-  return Response.json({ text: matchedText } satisfies GetSearchResponse);
+  const matchedText = documents.filter((content) => !!content).join("\n");
+
+  const sources = metadatas
+    .filter((content) => !!content)
+    .map((content) => content.source as string | undefined);
+
+  const filteredSources = new Set(sources.filter((content) => content != null));
+
+  return Response.json({
+    text: matchedText,
+    sources: Array.from(filteredSources),
+  } satisfies GetSearchResponse);
 }

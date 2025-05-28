@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import glob
-import argparse
 import os
 import requests
 import tiktoken
@@ -9,6 +8,7 @@ import dotenv
 
 dotenv.load_dotenv()
 
+OBSIDIAN_VAULT_PATH = os.getenv("OBSIDIAN_VAULT_PATH", "")
 CHROMADB_COLLECTION = os.getenv("CHROMADB_COLLECTION", "obsidian-notes")
 EXTENSIONS = ["md"]
 CHUNK_SIZE = 500
@@ -69,23 +69,14 @@ def process_file(file_path):
     print(f"✅ Processed {file_path} with {len(chunks)} chunks.")
 
 
-# function to fetch directory path from arguments
-def get_directory_path():
-    parser = argparse.ArgumentParser(description="Process some integers.")
-    parser.add_argument("path", type=str, help="Path to directory")
-    args = parser.parse_args()
-    return args.path
-
-
 if __name__ == "__main__":
-    path = get_directory_path()
-    print("Path:", path)
+    print("Vault Path:", OBSIDIAN_VAULT_PATH)
     print("ChromaDB Collection:", CHROMADB_COLLECTION)
     files = []
     for extension in EXTENSIONS:
-        files += glob.glob(f"{path}/**/*.{extension}", recursive=True)
+        files += glob.glob(f"{OBSIDIAN_VAULT_PATH}/**/*.{extension}", recursive=True)
 
-    # files = files[0:1]
+    files = files[0:1]
 
     for filepath in files:
         process_file(filepath)

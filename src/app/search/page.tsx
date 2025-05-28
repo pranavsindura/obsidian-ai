@@ -6,6 +6,7 @@ import { GetSearchResponse } from "../api/search/route";
 export default function Home() {
   const [input, setInput] = useState("");
   const [matchedText, setMatchedText] = useState("");
+  const [matchedSources, setMatchedSources] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -20,8 +21,9 @@ export default function Home() {
         },
       });
 
-      const { text } = (await response.json()) as GetSearchResponse;
+      const { text, sources } = (await response.json()) as GetSearchResponse;
       setMatchedText(text);
+      setMatchedSources(sources);
     } catch (error) {
       setError(error?.toString() ?? "unknown error occurred");
     }
@@ -37,6 +39,19 @@ export default function Home() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         ></textarea>
+        <h4 className="text-lg self-start mt-4">Matched Sources</h4>
+        <div className="max-h-[400px] whitespace-pre-line min-h-8 w-full bg-gray-200 p-2 border-black border rounded-sm flex flex-col gap-y-4 overflow-y-scroll">
+          {matchedSources.map((source) => (
+            <div key={source}>
+              <a
+                href={`obsidian://open?path=${source}`}
+                className="text-blue-600 hover:underline hover:text-blue-700"
+              >
+                {source}
+              </a>
+            </div>
+          ))}
+        </div>
         <h4 className="text-lg self-start mt-4">Matched Text</h4>
         <p className="max-h-[400px] whitespace-pre overflow-scroll min-h-8 w-full bg-gray-200 p-2 border-black border rounded-sm">
           {matchedText}
