@@ -58,8 +58,8 @@ Use `.env.sample` as a template and fill in your OpenAI and ChromaDB details
 1. Go into the project directory - `cd /path/to/obsidian-ai`
 2. Run ChromaDB - `chroma run`
 3. Run the app - `npm run start`
-4. Run `python src/scripts/embedFiles.py "/path/to/notes"`, this will start embedding your notes and storing them into ChromaDB
-   1. example - `python src/scripts/embedFiles.py "/Users/pranavsindura/Obsidian Notes/Personal"`
+4. Run `python src/scripts/embedFiles.py`, this will start embedding your notes and storing them into ChromaDB
+   1. example - `python src/scripts/embedFiles.py`
 
 ### Run the app
 
