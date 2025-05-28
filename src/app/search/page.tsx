@@ -23,7 +23,11 @@ export default function Home() {
 
       const { text, sources } = (await response.json()) as GetSearchResponse;
       setMatchedText(text);
-      setMatchedSources(sources);
+      setMatchedSources(
+        sources.map((source) =>
+          source.replace(process.env.NEXT_PUBLIC_OBSIDIAN_VAULT_PATH ?? "", ""),
+        ),
+      );
     } catch (error) {
       setError(error?.toString() ?? "unknown error occurred");
     }
@@ -44,7 +48,7 @@ export default function Home() {
           {matchedSources.map((source) => (
             <div key={source}>
               <a
-                href={`obsidian://open?path=${source}`}
+                href={`obsidian://open?path=${process.env.NEXT_PUBLIC_OBSIDIAN_VAULT_PATH}${source}`}
                 className="text-blue-600 hover:underline hover:text-blue-700"
               >
                 {source}

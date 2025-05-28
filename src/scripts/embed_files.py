@@ -8,7 +8,7 @@ import dotenv
 
 dotenv.load_dotenv()
 
-OBSIDIAN_VAULT_PATH = os.getenv("OBSIDIAN_VAULT_PATH", "")
+NEXT_PUBLIC_OBSIDIAN_VAULT_PATH = os.getenv("NEXT_PUBLIC_OBSIDIAN_VAULT_PATH", "")
 CHROMADB_COLLECTION = os.getenv("CHROMADB_COLLECTION", "obsidian-notes")
 EXTENSIONS = ["md"]
 CHUNK_SIZE = 500
@@ -70,11 +70,13 @@ def process_file(file_path):
 
 
 if __name__ == "__main__":
-    print("Vault Path:", OBSIDIAN_VAULT_PATH)
+    print("Vault Path:", NEXT_PUBLIC_OBSIDIAN_VAULT_PATH)
     print("ChromaDB Collection:", CHROMADB_COLLECTION)
     files = []
     for extension in EXTENSIONS:
-        files += glob.glob(f"{OBSIDIAN_VAULT_PATH}/**/*.{extension}", recursive=True)
+        files += glob.glob(
+            f"{NEXT_PUBLIC_OBSIDIAN_VAULT_PATH}/**/*.{extension}", recursive=True
+        )
 
     files = files[0:1]
 
