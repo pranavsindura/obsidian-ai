@@ -8,14 +8,20 @@ I use it to ask questions with my Obsidian based notes as reference.
 
 ### Chat
 
+Chat with your notes as context.
+
 ![Chat](./attachments/chat.png)
 ![Chat](./attachments/chat2.png)
 
 ### Embeddings
 
+Get embeddings of an input text.
+
 ![Embeddings](./attachments/embeddings.png)
 
 ## Search
+
+Search the context in your notes that matches the input text.
 
 ![Search](./attachments/search.png)
 
