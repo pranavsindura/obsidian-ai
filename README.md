@@ -39,7 +39,6 @@ You will need
 1. Clone the repository
 2. Install the Next.js dependencies
    1. `npm install` to install dependencies for the app
-   2. `npm run dev` to start the app
 3. Install the Python dependencies
    1. `cd src/scripts`
    2. `pip install -r requirements.txt`
@@ -49,17 +48,22 @@ You will need
 
 Use `.env.sample` as a template and fill in your OpenAI and ChromaDB details
 
+### Build the app
+
+1. Go into the project directory - `cd /path/to/obsidian-ai`
+2. Build the app - `npm run build`
+
 ### Create embeddings from your notes
 
 1. Go into the project directory - `cd /path/to/obsidian-ai`
 2. Run ChromaDB - `chroma run`
-3. Run `python src/scripts/embedFiles.py "/path/to/notes"`, this will start embedding your notes and storing them into ChromaDB
+3. Run the app - `npm run start`
+4. Run `python src/scripts/embedFiles.py "/path/to/notes"`, this will start embedding your notes and storing them into ChromaDB
    1. example - `python src/scripts/embedFiles.py "/Users/pranavsindura/Obsidian Notes/Personal"`
 
 ### Run the app
 
 1. Go into the project directory - `cd /path/to/obsidian-ai`
 2. Start ChromaDB - `chroma run`
-3. Build the app - `npm run build`
-4. Start the app - `npm run start`
-5. Open `http://localhost:3000` in your browser
+3. Start the app - `npm run start`
+4. Open `http://localhost:3000` in your browser
