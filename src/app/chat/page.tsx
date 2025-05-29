@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { PostChatBody, PostChatResponse } from "@/app/api/chat/route";
 import { Message } from "@/types/chat";
-import { GetSearchResponse } from "@/app/api/search/route";
 
 type HiddenMessage = Message & {
   hidden: boolean;
@@ -45,30 +44,6 @@ export default function Home() {
       hidden: false,
     });
 
-    let contextMessage: HiddenMessage | null = null;
-
-    try {
-      // search matched texts
-      const response = await fetch(`/api/search?q=${userPrompt}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const { text } = (await response.json()) as GetSearchResponse;
-      contextMessage = {
-        role: "assistant",
-        content: `Based on query, I found this in the user notes:\n${text}`,
-        hidden: true,
-      };
-      appendMessage(contextMessage);
-    } catch (error) {
-      setError(
-        error?.toString() ??
-          "unknown error occurred while searching for context",
-      );
-    }
-
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -78,7 +53,7 @@ export default function Home() {
         body: JSON.stringify({
           systemPrompt: systemPrompt,
           userPrompt: userPrompt,
-          messages: contextMessage ? [...messages, contextMessage] : messages,
+          messages,
         } satisfies PostChatBody),
       });
 

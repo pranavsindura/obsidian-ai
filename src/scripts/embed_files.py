@@ -78,7 +78,5 @@ if __name__ == "__main__":
             f"{NEXT_PUBLIC_OBSIDIAN_VAULT_PATH}/**/*.{extension}", recursive=True
         )
 
-    # files = files[0:1]
-
     for filepath in files:
         process_file(filepath)
