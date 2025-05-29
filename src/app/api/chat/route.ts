@@ -54,28 +54,32 @@ export async function POST(request: Request) {
     tools,
   });
 
-  messages.push(firstResult.choices[0].message);
+  let response: PostChatResponse = {
+    message: firstResult.choices[0].message.content,
+  };
 
   const { tool_calls } = firstResult.choices[0].message;
 
   if (tool_calls) {
+    messages.push(firstResult.choices[0].message);
+
     for (const toolCall of tool_calls) {
       const message = await handleToolCall(toolCall);
       if (message) {
         messages.push(message);
       }
     }
+
+    const secondResult = await client.chat.completions.create({
+      model: model,
+      messages,
+      tools,
+    });
+
+    response = {
+      message: secondResult.choices[0].message.content,
+    };
   }
-
-  const secondResult = await client.chat.completions.create({
-    model: model,
-    messages,
-    tools,
-  });
-
-  const response: PostChatResponse = {
-    message: secondResult.choices[0].message.content,
-  };
 
   return Response.json(response);
 }
