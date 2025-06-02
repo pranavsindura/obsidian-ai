@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex flex-row gap-x-8 p-4 bg-gray-100">
+        <div className="flex flex-row gap-x-8 p-4 bg-gray-100 border">
           <div className="text-md bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
             Obsidian AI
           </div>

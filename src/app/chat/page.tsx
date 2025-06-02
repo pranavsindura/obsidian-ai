@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { PostChatBody, PostChatResponse } from "@/app/api/chat/route";
 import { Message } from "@/types/chat";
+import Markdown from "react-markdown";
 
 type HiddenMessage = Message & {
   hidden: boolean;
@@ -10,7 +11,7 @@ type HiddenMessage = Message & {
 
 export default function Home() {
   const [systemPrompt, setSystemPrompt] = useState(
-    "you are smart, sharp, a critical thinker, a helpful assistant and a teacher.",
+    "You are an AI assistant that helps people find information. Always reply in markdown.",
   );
   const [messages, setMessages] = useState<HiddenMessage[]>([]);
   const [userPrompt, setUserPrompt] = useState("");
@@ -79,43 +80,45 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen py-2">
+    <div className="flex flex-col items-center py-2">
       <div className="flex flex-col w-[95%]">
-        <h4 className="text-lg self-start mt-4">System prompt</h4>
         <textarea
-          className="min-h-8 w-full border-black border rounded-sm p-2"
+          className="min-h-8 max-h-12 w-full border-black border rounded-sm p-2 mt-2"
           value={systemPrompt}
+          placeholder="System prompt"
           onChange={(e) => setSystemPrompt(e.target.value)}
-        ></textarea>
+        />
         <div
-          className="flex flex-col h-[400px] w-full border-black border overflow-scroll mt-4 p-8 gap-y-8"
+          className="flex flex-col h-[520px] w-full border-black border overflow-scroll mt-4 p-8 gap-y-8"
           ref={chatRef}
         >
           {messages
             .filter((message) => !message.hidden)
             .map((message, index) => (
               <div
-                key={index}
+                key={`${message}-${index}`}
                 className={`w-[80%] ${message.role === "user" ? "self-end" : "self-start"} bg-gray-200 border-black border rounded-md p-4`}
               >
-                <p className="text-md whitespace-pre-line">{message.content}</p>
+                <Markdown>{message.content}</Markdown>
               </div>
             ))}
         </div>
-        <textarea
-          className="min-h-8 w-full border-black border rounded-sm mt-4 p-2"
-          placeholder="Ask anything"
-          value={userPrompt}
-          onChange={(e) => setUserPrompt(e.target.value)}
-        ></textarea>
-        <button
-          className="mt-4 p-2 bg-black text-white w-20 cursor-pointer hover:bg-gray-600 disabled:bg-gray-400"
-          type="button"
-          onClick={getChatCompletion}
-          disabled={loading}
-        >
-          Submit
-        </button>
+        <div className="flex flex-row gap-x-2 items-start flex-full">
+          <textarea
+            className="min-h-12 h-fit w-full border-black border rounded-sm mt-4 p-2 flex-full"
+            placeholder="Ask anything"
+            value={userPrompt}
+            onChange={(e) => setUserPrompt(e.target.value)}
+          ></textarea>
+          <button
+            className="mt-4 p-2 bg-black text-white w-20 cursor-pointer rounded-sm hover:bg-gray-600 disabled:bg-gray-400"
+            type="button"
+            onClick={getChatCompletion}
+            disabled={loading}
+          >
+            Submit
+          </button>
+        </div>
         {loading && <p className="text-md mt-4">Loading...</p>}
         {error && <p className="text-red-500 text-md mt-4">{error}</p>}
       </div>

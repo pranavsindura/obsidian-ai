@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import glob
 import os
+import json
 import requests
 import tiktoken
 import chromadb
@@ -11,12 +12,12 @@ dotenv.load_dotenv()
 NEXT_PUBLIC_OBSIDIAN_VAULT_PATH = os.getenv("NEXT_PUBLIC_OBSIDIAN_VAULT_PATH", "")
 CHROMADB_COLLECTION = os.getenv("CHROMADB_COLLECTION", "obsidian-notes")
 EXTENSIONS = ["md"]
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 100
+CHUNK_SIZE = 1024
+CHUNK_OVERLAP = 200
 EMBEDDING_API = "http://localhost:3000/api/embedding"
+METADATA_FILE = "last_chunked.json"
 
 chroma_client = chromadb.HttpClient(host="localhost", port=8000)
-
 print("❤️ Heartbeat", chroma_client.heartbeat())
 
 collection = chroma_client.get_or_create_collection(name=CHROMADB_COLLECTION)
@@ -46,7 +47,7 @@ def chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
 
 
 def get_embedding(text):
-    response = requests.post(EMBEDDING_API, json={"text": text}, timeout=10)
+    response = requests.post(EMBEDDING_API, json={"text": text}, timeout=30)
     response.raise_for_status()
     return response.json()["vector"]
 
@@ -69,9 +70,29 @@ def process_file(file_path):
     print(f"✅ Processed {file_path} with {len(chunks)} chunks.")
 
 
+def load_metadata():
+    if os.path.exists(METADATA_FILE):
+        with open(METADATA_FILE, "r", encoding="utf-8") as f:
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                return {}
+    return {}
+
+
+def save_metadata(metadata):
+    with open(METADATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(metadata, f, indent=2)
+
+
 if __name__ == "__main__":
     print("Vault Path:", NEXT_PUBLIC_OBSIDIAN_VAULT_PATH)
     print("ChromaDB Collection:", CHROMADB_COLLECTION)
+
+    # Load the metadata file
+    metadata = load_metadata()
+
+    # Find all markdown files
     files = []
     for extension in EXTENSIONS:
         files += glob.glob(
@@ -79,4 +100,25 @@ if __name__ == "__main__":
         )
 
     for filepath in files:
-        process_file(filepath)
+        try:
+            file_mod_time = os.path.getmtime(filepath)
+        except OSError as e:
+            print(f"⚠️  Skipping {filepath} due to error: {e}")
+            continue
+
+        # Decide if file is new or has been modified since last processed
+        last_chunked_time = metadata.get(filepath, 0)
+        if file_mod_time > last_chunked_time:
+            print(f"🔄 Processing updated/new file: {filepath}")
+            try:
+                process_file(filepath)
+                # Update the processed time in metadata file
+                metadata[filepath] = file_mod_time
+            except Exception as e:
+                print(f"❌ Error processing {filepath}: {e}")
+        else:
+            print(f"⏭️  Skipping {filepath}; no changes detected.")
+
+    # Save the updated metadata
+    save_metadata(metadata)
+    print("✅ Completed processing files.")
