@@ -89,7 +89,7 @@ export default function Home() {
           onChange={(e) => setSystemPrompt(e.target.value)}
         />
         <div
-          className="flex flex-col h-[520px] w-full border-black border overflow-scroll mt-4 p-8 gap-y-8"
+          className="flex flex-col h-[520px] w-full border-black border overflow-scroll mt-4 p-8 gap-y-8 whitespace-pre-line"
           ref={chatRef}
         >
           {messages
