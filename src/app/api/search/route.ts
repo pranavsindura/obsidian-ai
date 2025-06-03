@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
   const response = await obsidianNotesCollection.query({
     queryEmbeddings: [result.data[0].embedding],
-    nResults: 5,
+    nResults: 10,
   });
 
   const documents = response.documents[0];
